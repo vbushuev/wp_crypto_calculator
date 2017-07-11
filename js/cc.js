@@ -6,23 +6,47 @@ var defaultCurrencies = {
         hashingPowerUnit:1073741824,
         powerConsumption:1000,
         powerCost:.4,
-    },LTC:{},ETH:{},ETC:{},XMR:{},ZEC:{},PASC:{},DASH:{}
+    },LTC:{
+        complex:275721
+    },ETH:{
+        complex:1.215*1000000000000000
+    },ETC:{
+        complex:1215000000000000
+    },XMR:{
+        complex:14.08*1000000000
+    },ZEC:{
+        complex:365064
+    },PASC:{
+        complex:365064
+    },DASH:{
+        complex: 365064
+    }
 };
 function dw_calc(i){
     var hp = parseFloat($('#hashing-power').val()),
         hpu = parseInt($("[name=currentHashingUnit]").val()),
-        pc = parseFloat($('#power-consumption').val()),
+        pc = parseFloat($('#power-consumption').val())/1000,
         cs = parseFloat($('#cost').val()),
-        c =  cc.currencies[i],
-        blocktime=c.complex/c.coinsnapshot.NetHashesPerSecond,
-        userratio=(hp*hpu)/c.coinsnapshot.NetHashesPerSecond,
+        c =  cc.currencies[i];
+    if(isNaN(hp) || isNaN(hpu)){
+        $('#hashing-power').val(c.hashingPower);hp = c.hashingPower;
+        $("[name=currentHashingUnit]").val(c.hashingPowerUnit);hpu=c.hashingPowerUnit;
+        $('#power-consumption').val(c.powerConsumption);pc=c.powerConsumption/1000;
+        $('#cost').val(c.powerCost);cs=c.powerCost;
+    }
+    var blocktime=c.complex/(c.coinsnapshot.NetHashesPerSecond),
+        userratio=(hp*hpu)/(c.coinsnapshot.NetHashesPerSecond*1073741824),
         blockperhour=3600/blocktime,
         coinhour=c.coinsnapshot.BlockReward*userratio*blockperhour;
-        console.debug(c.coinsnapshot.NetHashesPerSecond,c.coinsnapshot.BlockReward);
-        console.debug(blocktime);
-        console.debug(userratio);
-        console.debug(blockperhour);
-        console.debug(coinhour);
+    console.debug("NetHashesPerSecond="+c.coinsnapshot.NetHashesPerSecond);
+    console.debug("BlockReward="+c.coinsnapshot.BlockReward);
+    console.debug("blocktime="+blocktime);
+    console.debug("userratio="+userratio);
+    console.debug("blockperhour="+blockperhour);
+    console.debug("hp="+hp);
+    console.debug("hpu="+hpu);
+    console.debug("pc="+pc);
+    console.debug("cs="+cs);
         /*
         Это если по полочкам разложить..
         Пример, для ETH
@@ -39,11 +63,40 @@ function dw_calc(i){
 
         Т.е. 0,0207180 монеты в час
     */
+    return {
+
+        day:{
+            coins:coinhour*24,
+            debit:pc*cs*24,
+            reward:c.price.Price*coinhour*24,
+            profit:c.price.Price*coinhour*24-pc*cs*24
+        },
+        week:{
+            coins:coinhour*24*7,
+            debit:pc*cs*24*7,
+            reward:c.price.Price*coinhour*24*7,
+			profit:c.price.Price*coinhour*24*7-pc*cs*24*7
+        },
+        month:{
+            coins:coinhour*24*7*30,
+            debit:pc*cs*24*7*30,
+            reward:c.price.Price*coinhour*24*7*30,
+			profit:c.price.Price*coinhour*24*7*30-pc*cs*24*7*30
+        },
+        year:{
+            coins:coinhour*24*365,
+            debit:pc*cs*24*365,
+            reward:c.price.Price*coinhour*24*365,
+			profit:c.price.Price*coinhour*24*365-pc*cs*24*365
+        },
+        profit: 100*(c.price.Price*coinhour)/(pc*cs) -100
+    };
 };
 var page ={
     tabId:"#dw_tabs",
     bodyId:"#dw_body",
     sourceUrl:"https://www.cryptocompare.com",
+    current:"BTC",
     draw:{
         tabs:function(c){
             if(c=="undefined" || typeof(c)=="undefined")return;
@@ -53,19 +106,38 @@ var page ={
             $(page.tabId).html(s);
         },
         body:function(i){
-            var c = cc.currencies[i];
-            console.debug(c);
-
-            $('#hashing-power').val(c.hashingPower);
-            $("[name=currentHashingUnit]").val(c.hashingPowerUnit);
-            $('#power-consumption').val(c.powerConsumption);
-            $('#cost').val(c.powerCost);
+            var c = cc.currencies[i],calc = dw_calc(i),
+                profitDayPercent = ((100*calc.day.reward/calc.day.debit)-100),
+                capitalizeFirstLetter = function (string) {return string.charAt(0).toUpperCase() + string.slice(1);};
+            $(".calculator-results").removeClass("results-positive").removeClass("results-negative").addClass((profitDayPercent>0)?"results-positive":"results-negative");
+            page.current = i;
+            console.debug(c,calc);
             $(page.tabId+' li').removeClass('active');
             $(page.tabId+' li[data-name="'+c.Name+'"]').addClass('active');
             $(page.bodyId+' .panel-calculator .panel-image').html('<a href="#"><img title="Logo BTC" src="'+page.sourceUrl+c.ImageUrl+'?width=200"></a>');
             $(page.bodyId+' .panel-calculator .calculated-for-value').text('1 '+c.Name+' = $'+c.price.Price);
+            $(' .results-header .circle-values').html(
+                '<div class="circle-value circle-first" title="This is the total mined - the total cost">'
+                +'<div class="circle-label">Profit per month</div>'
+                +'    <div class="circle-content ng-binding">$ '
+                +calc.month.profit.toFixed(2)+'</div>'
+                +'</div><div class="circle-value"><div class="circle-label">Profit ratio per day</div><div class="circle-content ng-binding">'
+                +profitDayPercent.toFixed(2)+' %</div></div>'
+            );
 
-            var calc = dw_calc(i);
+            $('.calculator-results .calculator-container').remove();
+            for(var ii in calc){
+                if(["day","week","month","year"].indexOf(ii)<0)continue;
+                var $cc = $('<div class="calculator-container"></div>').appendTo('.calculator-results')
+                $cc.append('<div class="calculator-row-name">'+capitalizeFirstLetter(ii)+'</div>');
+                $cc.append('<div class="calculator-col calculator-first-col"><div class="calculator-label" title="This is the total mined - the total cost">Profit per '+ii+'</div><div class="calculator-value ng-binding">'
+                            +'$ '+calc[ii].profit.toFixed(4)+'</div></div>');
+                $cc.append('<div class="calculator-col"><div class="calculator-label">Mined/'+ii+'</div><div class="calculator-value ng-binding">'
+                            +' '+calc[ii].coins.toFixed(8)+'</div></div>');
+                $cc.append('<div class="calculator-col"><div class="calculator-label">Power cost/'+capitalizeFirstLetter(ii)+'</div><div class="calculator-value ng-binding">'
+                            +'$ '+calc[ii].debit.toFixed(2)+'</div></div>');
+            }
+
         }
     }
 };
@@ -140,4 +212,7 @@ $("body").on(cc.events.ready,function(){
     console.debug(cc.events.ready+" ready");
     page.draw.tabs(cc.currencies);
     page.draw.body('BTC');
+    $(".panel-calculator input,.panel-calculator select").on("change keyup",function(){
+        page.draw.body(page.current);
+    });
 })

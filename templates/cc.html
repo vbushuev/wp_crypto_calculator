@@ -4,9 +4,7 @@
     <div class="col-md-4">
         <div class="panel panel-calculator">
             <div class="panel-image">
-                <a href="/coins/btc/overview/">
-                    <img title="Logo BTC" src="/media/19633/btc.png?width=200">
-                </a>
+                <!-- <a href="/coins/btc/overview/"><img title="Logo BTC" src="/media/19633/btc.png?width=200"></a> -->
             </div>
             <div class="calculated-for">Calculated for
                 <div class="calculated-for-value ng-binding">1 BTC = $ 2584.43</div>
@@ -15,7 +13,7 @@
                 <form class="ng-pristine ng-valid">
                     <div class="form-group">
                         <label for="hashing-power">Hashing Power</label>
-                        <div class="input-group">
+                        <!-- <div class="input-group"> -->
                             <input class="form-control input-hashing-power ng-pristine ng-untouched ng-valid ng-not-empty" name="HashingPower" id="hashing-power" type="text" ng-model="currentData.HashingPower" ng-change="generateValues()">
                             <select class="input-group-addon select-hashing-power ng-pristine ng-untouched ng-valid ng-not-empty" name="currentHashingUnit" ng-options="option for option in hashingUnitsNames track by option" ng-model="currentData.HashingUnit" ng-change="generateValues()">
                                 <option label="H/s" value="1">H/s</option>
@@ -24,7 +22,7 @@
                                 <option label="GH/s" value="1073741824" selected="selected">GH/s</option>
                                 <option label="TH/s" value="1099511627776">TH/s</option>
                             </select>
-                        </div>
+                        <!-- </div> -->
                     </div>
 
                     <div class="form-group">
@@ -46,20 +44,7 @@
     <div class="col-md-8">
         <div class="calculator-results results-positive">
             <div class="results-header">
-                <div class="circle-values">
-                    <div class="circle-value circle-first" title="This is the total mined - the total cost">
-                        <div class="circle-label">Profit per month</div>
-                        <div class="circle-content ng-binding">
-                            $ 3.57
-                        </div>
-                    </div>
-                    <div class="circle-value">
-                        <div class="circle-label">Profit ratio per day</div>
-                        <div class="circle-content ng-binding">
-                            8%
-                        </div>
-                    </div>
-                </div>
+                <div class="circle-values"></div>
             </div>
 
             <div class="calculator-container">
