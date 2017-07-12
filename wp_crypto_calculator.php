@@ -18,7 +18,7 @@ function crypto_calculator_load_resources_and_shortcodes(){
 }
 function crypto_calculator_shortcode(){
     $template = file_get_contents(WP_CRYPTO_CALCULATOR_DIR.'templates/cc.html');
-    $params = [];
+    $params = array();
     $content = preg_replace_callback('/\{\{([^\}]+)\}\}/im',function($m)use($params){
         $var = strtolower(trim($m[1]));
         return isset($params[$var])?$params[$var]:'';
@@ -30,6 +30,7 @@ function crypto_calculator_init() {
     wp_deregister_script( 'jquery' );
     wp_enqueue_script( 'jquery', 'https://code.jquery.com/jquery-2.2.4.min.js');
     wp_enqueue_style( 'crypto_calculator',WP_CRYPTO_CALCULATOR_URL.'css/style.css', false, '1.0.0', 'all');
+    wp_enqueue_style( 'bootsrap','https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css');
     wp_enqueue_script( 'crypto_calculator', WP_CRYPTO_CALCULATOR_URL.'js/cc.js', false, '1.0.0', 'all');
 }
 
