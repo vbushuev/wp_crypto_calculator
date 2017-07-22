@@ -1,8 +1,10 @@
-<h1 class="page-title">Currency</h1>
-<ul class="nav nav-tabs" id="dw_tabs"></ul>
+
 <div class="-cc-container clearfix row"  id="dw_body">
-    <div class="col-md-4">
-        <div class="panel panel-calculator">
+    <h1 class="page-title" style="mergin-left:30px;">{{title}}</h1>
+    <ul class="nav nav-tabs" id="dw_tabs" style="margin:0 15px;"></ul>
+    <!-- <div class="col col-md-4" style="width:33%;float:left;"> -->
+    <div class="col col-md-4">
+        <div class="panel panel-calculator" style="border:solid 1px #ddd; border-top:none;">
             <div class="panel-image">
                 <!-- <a href="/coins/btc/overview/"><img title="Logo BTC" src="/media/19633/btc.png?width=200"></a> -->
             </div>
@@ -17,10 +19,10 @@
                             <input class="form-control input-hashing-power ng-pristine ng-untouched ng-valid ng-not-empty" name="HashingPower" id="hashing-power" type="text" ng-model="currentData.HashingPower" ng-change="generateValues()">
                             <select class="input-group-addon select-hashing-power ng-pristine ng-untouched ng-valid ng-not-empty" name="currentHashingUnit" ng-options="option for option in hashingUnitsNames track by option" ng-model="currentData.HashingUnit" ng-change="generateValues()">
                                 <option label="H/s" value="1">H/s</option>
-                                <option label="KH/s" value="1024">KH/s</option>
-                                <option label="MH/s" value="1048576">MH/s</option>
-                                <option label="GH/s" value="1073741824" selected="selected">GH/s</option>
-                                <option label="TH/s" value="1099511627776">TH/s</option>
+                                <option label="KH/s" value="1000">KH/s</option>
+                                <option label="MH/s" value="1000000">MH/s</option>
+                                <option label="GH/s" value="1000000000" selected="selected">GH/s</option>
+                                <option label="TH/s" value="1000000000000">TH/s</option>
                             </select>
                         <!-- </div> -->
                     </div>
@@ -41,7 +43,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <!-- <div class="col col-md-8" style="width:66%;float:left;border:solid 1px #ddd; border-left:none;"> -->
+    <div class="col col-md-8">
         <div class="calculator-results results-positive">
             <div class="results-header">
                 <div class="circle-values"></div>
